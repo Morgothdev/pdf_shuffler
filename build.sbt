@@ -4,7 +4,7 @@ assemblySettings
 
 jarName in assembly := "shuffler.jar"
 
-mainClass in assembly := Some("Runner")
+mainClass in assembly := Some("consoleApp.Runner")
 
 name := "hello"
 

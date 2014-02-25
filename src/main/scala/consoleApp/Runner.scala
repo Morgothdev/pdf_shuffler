@@ -3,14 +3,16 @@ package consoleApp
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
+
 import core.Book
 import core.PDFBoxHelpers._
 import core.PDFLoader._
+import pl.morgoth.scala.utils.Log
 import pl.morgoth.scala.utils.StreamHelpers._
 import scopt.OptionParser
-import pl.morgoth.scala.utils.Log
 
 object Runner {
 
@@ -19,6 +21,7 @@ object Runner {
     sheetsInCrop: Int = 4,
     blankPage: Int = -1,
     verbose: Boolean = false,
+    numbers: Boolean = false,
     files: Seq[File] = Seq())
 
   def main(args: Array[String]): Unit = {
@@ -44,6 +47,10 @@ object Runner {
         c.copy(verbose = true)
       } text ("tell me more!")
 
+      opt[Unit]('n', "numbers") action { (_, c) =>
+        c.copy(numbers = true)
+      } text ("only numbers, don't write ouput file")
+
       help("help") text ("prints this usage text")
     }
 
@@ -61,7 +68,7 @@ object Runner {
   }
 
   def makeOutputFile(input: File) =
-    new File(input.getParent()+"shuffled_"+input.getName())
+    new File(input.getAbsoluteFile().getParent() + File.separator+"shuffled_"+input.getName())
 
   def newPDPage = {
     val ret = new PDPage(PDPage.PAGE_SIZE_A4)
@@ -81,17 +88,25 @@ object Runner {
         require(blanks.length == (pagesInCrop - 1))
         val book: List[(PDPage, Int)] = Book(tuples, config.pagesOnPage, config.sheetsInCrop, blanks) toList ()
 
-        logger.log(book.map(_._2).mkString(file.getName()+": \n", ", ", "\n\n"))
+        val outputNumbers = book.map(_._2).mkString(file.getName()+": \n", ", ", "\n\n")
+        if (!config.verbose && config.numbers) {
+          println(outputNumbers)
+        } else {
+          logger.log(outputNumbers)
+        }
 
-        val outFile = makeOutputFile(file)
-        println("zapis w pliku: "+outFile.getAbsolutePath())
-        outFile.delete()
-        outFile.createNewFile()
-        withOpenDocument(new PDDocument()){ document =>
-          {
-            book foreach (document importPage _._1)
-            withOpenStream(new FileOutputStream(outFile)){ stream =>
-              document save stream
+        if (!config.numbers) {
+
+          val outFile = makeOutputFile(file)
+          logger.log("zapis w pliku: "+outFile.getAbsolutePath())
+          outFile.delete()
+          outFile.createNewFile()
+          withOpenDocument(new PDDocument()){ document =>
+            {
+              book foreach (document importPage _._1)
+              withOpenStream(new FileOutputStream(outFile)){ stream =>
+                document save stream
+              }
             }
           }
         }
