@@ -1,3 +1,5 @@
+package pl.morgoth.scala.utils
+
 abstract class Log {
   def log(msg: String)
 }

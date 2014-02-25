@@ -1,15 +1,16 @@
+package consoleApp
+
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
-
 import core.Book
 import core.PDFBoxHelpers._
 import core.PDFLoader._
 import pl.morgoth.scala.utils.StreamHelpers._
 import scopt.OptionParser
+import pl.morgoth.scala.utils.Log
 
 object Runner {
 
