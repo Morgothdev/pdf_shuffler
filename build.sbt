@@ -1,3 +1,11 @@
+import AssemblyKeys._
+
+assemblySettings
+
+jarName in assembly := "shuffler.jar"
+
+mainClass in assembly := Some("Runner")
+
 name := "hello"
 
 version := "1.0"
