@@ -2,3 +2,5 @@
 /target
 *.pdf
 /project/project/target
+/.idea*
+/project/target*

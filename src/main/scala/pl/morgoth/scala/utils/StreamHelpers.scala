@@ -1,6 +1,5 @@
 package pl.morgoth.scala.utils
 
-import Helpers._
 import java.io.Closeable
 
 object StreamHelpers {
